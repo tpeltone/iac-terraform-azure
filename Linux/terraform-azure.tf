@@ -4,20 +4,15 @@ provider "azurerm" {
     # If you're using version 1.x, the "features" block is not allowed.
     version = "~>2.0"
     features {}
-
-    subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    client_id       = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    client_secret   = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    tenant_id       = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 
 # Create a resource group if it doesn't exist
 resource "azurerm_resource_group" "myterraformgroup" {
     name     = "myResourceGroup"
-    location = "eastus"
+    location = "westeurope"
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Iac Terraform Azure Lab Demo"
     }
 }
 
@@ -25,11 +20,11 @@ resource "azurerm_resource_group" "myterraformgroup" {
 resource "azurerm_virtual_network" "myterraformnetwork" {
     name                = "myVnet"
     address_space       = ["10.0.0.0/16"]
-    location            = "eastus"
+    location            = "westeurope"
     resource_group_name = azurerm_resource_group.myterraformgroup.name
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Iac Terraform Azure Lab Demo"
     }
 }
 
@@ -44,19 +39,19 @@ resource "azurerm_subnet" "myterraformsubnet" {
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
     name                         = "myPublicIP"
-    location                     = "eastus"
+    location                     = "westeurope"
     resource_group_name          = azurerm_resource_group.myterraformgroup.name
     allocation_method            = "Dynamic"
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Iac Terraform Azure Lab Demo"
     }
 }
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "myterraformnsg" {
     name                = "myNetworkSecurityGroup"
-    location            = "eastus"
+    location            = "westeurope"
     resource_group_name = azurerm_resource_group.myterraformgroup.name
     
     security_rule {
@@ -72,14 +67,14 @@ resource "azurerm_network_security_group" "myterraformnsg" {
     }
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Iac Terraform Azure Lab Demo"
     }
 }
 
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
     name                      = "myNIC"
-    location                  = "eastus"
+    location                  = "westeurope"
     resource_group_name       = azurerm_resource_group.myterraformgroup.name
 
     ip_configuration {
@@ -90,7 +85,7 @@ resource "azurerm_network_interface" "myterraformnic" {
     }
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Iac Terraform Azure Lab Demo"
     }
 }
 
@@ -114,19 +109,19 @@ resource "random_id" "randomId" {
 resource "azurerm_storage_account" "mystorageaccount" {
     name                        = "diag${random_id.randomId.hex}"
     resource_group_name         = azurerm_resource_group.myterraformgroup.name
-    location                    = "eastus"
+    location                    = "westeurope"
     account_tier                = "Standard"
     account_replication_type    = "LRS"
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Iac Terraform Azure Lab Demo"
     }
 }
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "myterraformvm" {
-    name                  = "myVM"
-    location              = "eastus"
+    name                  = "myVM2"
+    location              = "westeurope"
     resource_group_name   = azurerm_resource_group.myterraformgroup.name
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
     size                  = "Standard_DS1_v2"
@@ -145,12 +140,12 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     }
 
     computer_name  = "myvm"
-    admin_username = "azureuser"
+    admin_username = "builder"
     disable_password_authentication = true
         
     admin_ssh_key {
-        username       = "azureuser"
-        public_key     = file("/home/azureuser/.ssh/authorized_keys")
+        username       = "builder"
+        public_key     = file("/Users/tomipeltonen/.ssh/builder.pub")
     }
 
     boot_diagnostics {
@@ -158,6 +153,6 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     }
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Iac Terraform Azure Lab Demo"
     }
 }
