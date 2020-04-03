@@ -145,7 +145,7 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
         
     admin_ssh_key {
         username       = "builder"
-        public_key     = file("/Users/tomipeltonen/.ssh/builder.pub")
+        public_key     = file("/home/builder/.ssh/authorized_keys")
     }
 
     boot_diagnostics {
